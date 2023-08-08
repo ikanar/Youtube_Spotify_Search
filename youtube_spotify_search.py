@@ -5,6 +5,7 @@ from spotipy.oauth2 import SpotifyOAuth
 from bs4 import BeautifulSoup
 import requests
 import re
+from termcolor import colored
 
 
 #ToDo: Fix URls for songs with multiple artists/features
@@ -21,7 +22,7 @@ def scrape_lyrics(artist_name, song_name):
         html = BeautifulSoup(page.text,'html.parser')
 
         #collects lyrics from html
-        print('https://genius.com/'+artist_name_2 + '-'+ song_name_2 + '-' + 'lyrics')
+        #print('https://genius.com/'+artist_name_2 + '-'+ song_name_2 + '-' + 'lyrics')
         lyrics1 = html.find_all("div",attrs={'class':re.compile(r'ReferentFragmentDesktop|Lyrics__Container')})
         lyrics2 = html.find_all("span",attrs={'class':re.compile(r'ReferentFragmentdesktop|Lyrics__Container')})        
         lyrics = []
@@ -35,7 +36,8 @@ def scrape_lyrics(artist_name, song_name):
 
                         lyrics.append(L.get_text("<br>").replace("<br>", " "))
         else:
-                lyrics = None      
+                lyrics = None
+                return []      
         return lyrics
 
 # You need to insert your own client id and secret id fromt he spotify dev menu
@@ -52,23 +54,27 @@ results = sp.current_user_recently_played(limit=50)
 # prints out tracks and lyrics from your spotify most recently played which is capped at 50
 #using this for debugging
 # currently a bug with the wrong url being generated for songs with multiple artists
-for idx, item in enumerate(results['items']):
+"""for idx, item in enumerate(results['items']):
     track = item['track']
     print(scrape_lyrics( track['artists'][0]['name'], track['name']))
     print(idx, track['artists'][0]['name'], " – ", track['name'])
     for artist in track['artists']:
-           print (artist)
+           print (artist)"""
 
 
 
 search_string = input("Enter in String to search: ")
 
-lyrics = scrape_lyrics("Frank Ocean", "Nights")
 
-
-
-for lyric in lyrics:
-       if search_string.lower() in lyric.lower():
-               print (lyric)
-
-print(search_string)
+#TO DO: need to prune the returned lyric size, currently too big due to the more generalized lyric scraping I implemented. Is this a good bug??
+#finds if the search_string matches the sraped lyrics
+#prints out the match with the search_string highlighte in red
+for idx, item in enumerate(results['items']):
+    track = item['track']
+    artist = track['artists'][0]['name']
+    song= track['name']
+    lyrics = scrape_lyrics(artist, song)
+    if len(lyrics)>0:
+        for lyric in lyrics:
+                if search_string.lower() in lyric.lower():
+                        print (artist + ": " + song +"- " + lyric.replace(search_string,colored(search_string,'red')))
