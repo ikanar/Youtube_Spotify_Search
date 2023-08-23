@@ -128,7 +128,7 @@ if __name__ == '__main__':
 
 
         #scrape youtube history and return cc data
-        youtube_history = scrape_youtube_history(youtube_email,youtube_password)
+        #youtube_history = scrape_youtube_history(youtube_email,youtube_password)
        
        
         search_string = input("Enter in String to search: ")
