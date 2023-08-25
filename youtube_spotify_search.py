@@ -132,7 +132,7 @@ if __name__ == '__main__':
        
        
         search_string = input("Enter in String to search: ")
-
+        search_string = search_string.lower()
 
 #TO DO: need to prune the returned lyric size, currently too big due to the more generalized lyric scraping I implemented. Is this a good bug??
 #finds if the search_string matches the sraped lyrics
@@ -144,5 +144,7 @@ if __name__ == '__main__':
                 lyrics = scrape_lyrics(artist, song)
                 if len(lyrics)>0:
                         for lyric in lyrics:
-                                if search_string.lower() in lyric.lower():
-                                        print (artist + ": " + song +"- " + lyric.replace(search_string,colored(search_string,'red')))
+                                lyric = lyric.lower()
+                                if search_string in lyric:
+                                        print ("\033[1m"+artist + ": " + song +"\033[0m"+"-" + lyric.replace(search_string,colored(search_string,'red')))
+                                        print("\n\n\n\n")
