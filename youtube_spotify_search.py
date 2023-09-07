@@ -6,18 +6,15 @@ from bs4 import BeautifulSoup
 import requests
 import re
 from termcolor import colored
-
 from selenium import webdriver
-
 import logging
-
 from chromedriver_py import binary_path
-
 from selenium.webdriver.chrome.service import Service as ChromeService
 from webdriver_manager.chrome import ChromeDriverManager
 import undetected_chromedriver as uc
 import time
 from selenium.webdriver.common.by import By
+from lyricsgenius import Genius 
 
 
 
@@ -57,42 +54,6 @@ def scrape_youtube_history(email,password):
 
 
 
-#ToDo: Fix URls for songs with multiple artists/features
-#scrapes lyrics from genius.com
-def scrape_lyrics(artist_name, song_name):
-        
-        #clean up artist and song name
-        artist_name_2 = str(artist_name.replace(' ','-')) if ' ' in artist_name else str(artist_name)
-        song_name_2 = str(song_name.replace(' ','-')) if ' ' in song_name else str(song_name)
-       
-       
-        #creates html parser
-        page = requests.get('https://genius.com/'+artist_name_2 + '-'+ song_name_2 + '-' + 'lyrics')
-        html = BeautifulSoup(page.text,'html.parser')
-
-        #collects lyrics from html
-        #print('https://genius.com/'+artist_name_2 + '-'+ song_name_2 + '-' + 'lyrics')
-        lyrics1 = html.find_all("div",attrs={'class':re.compile(r'ReferentFragmentDesktop|Lyrics__Container')})
-        lyrics2 = html.find_all("span",attrs={'class':re.compile(r'ReferentFragmentdesktop|Lyrics__Container')})        
-        lyrics = []
-
-        #cleans lyric data and loads lyrics into lyrics[]
-        if lyrics1:
-                 for L in lyrics1:
-                        lyrics.append(L.get_text("<br>").replace("<br>", " "))
-        elif lyrics2:
-                for L in lyrics2:
-
-                        lyrics.append(L.get_text("<br>").replace("<br>", " "))
-        else:
-                lyrics = None
-                return []      
-        return lyrics
-
-
-
-
-
 if __name__ == '__main__':
 
         #enter your credentials here
@@ -101,6 +62,13 @@ if __name__ == '__main__':
 
         youtube_email = "ENTER YOUTUBE EMAIL HERE"
         youtube_password = "ENTER YOUTUBE PASSWORD HERE"
+
+        genius = Genius("ENTER YOUR GENIUS.COM ACCESS TOKEN HERE")
+
+#You need to install the genius python api from https://lyricsgenius.readthedocs.io/en/master/setup.html, easy to isntall with pip install lyricsgenius
+#Then you need to create a genius.com access token from here https://docs.genius.com/
+
+
 
 
 # You need to insert your own client id and secret id fromt he spotify dev menu
@@ -134,17 +102,19 @@ if __name__ == '__main__':
         search_string = input("Enter in String to search: ")
         search_string = search_string.lower()
 
-#TO DO: need to prune the returned lyric size, currently too big due to the more generalized lyric scraping I implemented. Is this a good bug??
-#finds if the search_string matches the sraped lyrics
-#prints out the match with the search_string highlighte in red
+#TO DO:
+#finds if the search_string matches the lyrics 
+#prints out the match with the search_string highlighted in red
         for idx, item in enumerate(results['items']):
                 track = item['track']
                 artist = track['artists'][0]['name']
                 song= track['name']
-                lyrics = scrape_lyrics(artist, song)
-                if len(lyrics)>0:
-                        for lyric in lyrics:
-                                lyric = lyric.lower()
+                song1 = genius.search_song(song, artist)
+                if song1 is not None:      
+                        lyrics = song1.lyrics
+                        if len(lyrics)>0:
+                                lyric = lyrics.lower()
                                 if search_string in lyric:
                                         print ("\033[1m"+artist + ": " + song +"\033[0m"+"-" + lyric.replace(search_string,colored(search_string,'red')))
                                         print("\n\n\n\n")
+
