@@ -37,19 +37,16 @@ def scrape_youtube_history(email,password):
        #driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
 
 
-       page_source = driver.get('https://www.youtube.com/feed/history')
+       driver.get('https://www.youtube.com/feed/history')
 
-       #html = BeautifulSoup(page_source,'html')
+       elements = driver.find_elements(By.XPATH,'//*[@id="thumbnail"]')
 
-       #history = html.find_all('a',attrs={'id':'thumbnail'})
+       links = []
 
-       #link_history = []
+       for element in elements:
+          links.append(element.get_attribute("href"))
 
-       #for event in history:
-        #      link_history.append(event['href'])
-        
-       #print (link_history)
-       return []
+       return links
 
 
 
@@ -67,7 +64,6 @@ if __name__ == '__main__':
 
 #You need to install the genius python api from https://lyricsgenius.readthedocs.io/en/master/setup.html, easy to isntall with pip install lyricsgenius
 #Then you need to create a genius.com access token from here https://docs.genius.com/
-
 
 
 
