@@ -14,7 +14,8 @@ from webdriver_manager.chrome import ChromeDriverManager
 import undetected_chromedriver as uc
 import time
 from selenium.webdriver.common.by import By
-from lyricsgenius import Genius 
+from lyricsgenius import Genius
+from selenium.webdriver.common.keys import Keys 
 
 
 
@@ -39,7 +40,16 @@ def scrape_youtube_history(email,password):
 
        driver.get('https://www.youtube.com/feed/history')
 
-       elements = driver.find_elements(By.XPATH,'//*[@id="thumbnail"]')
+
+
+       scan_length = 5
+
+       while scan_length > 0:
+            elem = driver.find_element(By.TAG_NAME, "html")
+            elem.send_keys(Keys.END)
+            time.sleep(4)
+            scan_length = scan_length - 1
+            elements = driver.find_elements(By.XPATH,'//*[@id="thumbnail"]')
 
        links = []
 
