@@ -19,7 +19,11 @@ from selenium.webdriver.common.keys import Keys
 
 
 
-
+#logs a user into their google account
+#navigates to the youtube.com/feed/history 
+#scrapes the links from the thumbnails
+#cleans up links
+#returns list of links
 def scrape_youtube_history(email,password):
        logger = logging.getLogger('selenium')
 
@@ -33,9 +37,6 @@ def scrape_youtube_history(email,password):
        driver.find_element(By.XPATH, '//*[@id="passwordNext"]/div/button/span').click()
        time.sleep(15)
 
-
-       
-       #driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
 
 
        driver.get('https://www.youtube.com/feed/history')
@@ -91,16 +92,6 @@ if __name__ == '__main__':
         results = sp.current_user_recently_played(limit=50)
 
 # prints out tracks and lyrics from your spotify most recently played which is capped at 50
-#using this for debugging
-# currently a bug with the wrong url being generated for songs with multiple artists
-        """for idx, item in enumerate(results['items']):
-        track = item['track']
-        print(scrape_lyrics( track['artists'][0]['name'], track['name']))
-        print(idx, track['artists'][0]['name'], " – ", track['name'])
-        for artist in track['artists']:
-                 print (artist)"""
-
-
         #scrape youtube history and return cc data
         #youtube_history = scrape_youtube_history(youtube_email,youtube_password)
        
