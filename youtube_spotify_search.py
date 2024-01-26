@@ -71,6 +71,8 @@ if __name__ == '__main__':
         youtube_email = "ENTER YOUTUBE EMAIL HERE"
         youtube_password = "ENTER YOUTUBE PASSWORD HERE"
 
+        youtube_API_key = "ENTER YOUR YOUTUBE API KEY HERE"
+
         genius = Genius("ENTER YOUR GENIUS.COM ACCESS TOKEN HERE")
 
 #You need to install the genius python api from https://lyricsgenius.readthedocs.io/en/master/setup.html, easy to isntall with pip install lyricsgenius
