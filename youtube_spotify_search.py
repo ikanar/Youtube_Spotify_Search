@@ -59,6 +59,10 @@ def scrape_youtube_history(email,password):
 
        return links
 
+def get_youtube_cc_data (youtube_history):
+       cc_data = []
+       return cc_data
+
 
 
 
@@ -95,7 +99,9 @@ if __name__ == '__main__':
 
 # prints out tracks and lyrics from your spotify most recently played which is capped at 50
         #scrape youtube history and return cc data
-        #youtube_history = scrape_youtube_history(youtube_email,youtube_password)
+        youtube_history = scrape_youtube_history(youtube_email,youtube_password)
+
+        youtube_cc_data = get_youtube_cc_data(youtube_history)
        
        
         search_string = input("Enter in String to search: ")
