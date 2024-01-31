@@ -63,19 +63,13 @@ def get_youtube_cc_data (youtube_history):
        cc_data = []
        return cc_data
 
-
-
-
-if __name__ == '__main__':
-
-        #enter your credentials here
+def main():
+              #enter your credentials here
         spotify_client_id = "ENTER SPOTIFY CLIENT ID HERE"
         spotify_secret_id = "ENTER SPOTIFY SECRET ID HERE"
 
         youtube_email = "ENTER YOUTUBE EMAIL HERE"
         youtube_password = "ENTER YOUTUBE PASSWORD HERE"
-
-        youtube_API_key = "ENTER YOUR YOUTUBE API KEY HERE"
 
         genius = Genius("ENTER YOUR GENIUS.COM ACCESS TOKEN HERE")
 
@@ -123,3 +117,7 @@ if __name__ == '__main__':
                                         print ("\033[1m"+artist + ": " + song +"\033[0m"+"-" + lyric.replace(search_string,colored(search_string,'red')))
                                         print("\n\n\n\n")
 
+
+if __name__ == '__main__':
+
+        main()
