@@ -1,21 +1,14 @@
-import pandas as pd
 import spotipy
-from spotipy.oauth2 import SpotifyClientCredentials
 from spotipy.oauth2 import SpotifyOAuth
-from bs4 import BeautifulSoup
-import requests
-import re
 from termcolor import colored
-from selenium import webdriver
-import logging
-from chromedriver_py import binary_path
-from selenium.webdriver.chrome.service import Service as ChromeService
-from webdriver_manager.chrome import ChromeDriverManager
 import undetected_chromedriver as uc
 import time
 from selenium.webdriver.common.by import By
 from lyricsgenius import Genius
 from selenium.webdriver.common.keys import Keys 
+from pytube import extract
+from youtube_transcript_api import YouTubeTranscriptApi
+import datetime
 
 
 
@@ -25,9 +18,7 @@ from selenium.webdriver.common.keys import Keys
 #cleans up links
 #returns list of links
 def scrape_youtube_history(email,password):
-       logger = logging.getLogger('selenium')
 
-       logger.setLevel(logging.DEBUG)
        driver = uc.Chrome()
        driver.get('https://accounts.google.com/')
        driver.find_element(By.XPATH, '//*[@id="identifierId"]').send_keys(email)
@@ -50,21 +41,34 @@ def scrape_youtube_history(email,password):
             elem.send_keys(Keys.END)
             time.sleep(4)
             scan_length = scan_length - 1
-            elements = driver.find_elements(By.XPATH,'//*[@id="thumbnail"]')
+       elements = driver.find_elements(By.XPATH,'//*[@id="video-title"]')    
+        
 
-       links = []
+      
+       history = {}
 
+    #loads links from html elements into a list 
+    #filters out the "None" elements
        for element in elements:
-          links.append(element.get_attribute("href"))
+               title = element.get_attribute("title")
+               e = element.get_attribute("href")
+               if e != None:
+                       id = extract.video_id(e)
+                       history[title] = id
 
-       return links
+       return history
 
 def get_youtube_cc_data (youtube_history):
-       cc_data = []
+       
+       cc_data = {}
+
+       for event in youtube_history:
+               transcript = YouTubeTranscriptApi.get_transcript(youtube_history[event])
+               cc_data[event] = transcript
        return cc_data
 
 def main():
-              #enter your credentials here
+        #enter your credentials here
         spotify_client_id = "ENTER SPOTIFY CLIENT ID HERE"
         spotify_secret_id = "ENTER SPOTIFY SECRET ID HERE"
 
@@ -117,6 +121,14 @@ def main():
                                         print ("\033[1m"+artist + ": " + song +"\033[0m"+"-" + lyric.replace(search_string,colored(search_string,'red')))
                                         print("\n\n\n\n")
 
+        for video_title in youtube_cc_data:
+                for line in youtube_cc_data[video_title]:
+                        if search_string in line['text']:
+                                print(video_title)
+                                print(line['text'].replace(search_string,colored(search_string,'red')))
+                                convert = str(datetime.timedelta(seconds = line['start']))
+                                print("Time: " + convert)
+                                print("\n\n\n")         
 
 if __name__ == '__main__':
 
