@@ -121,6 +121,7 @@ def main():
                                         print ("\033[1m"+artist + ": " + song +"\033[0m"+"-" + lyric.replace(search_string,colored(search_string,'red')))
                                         print("\n\n\n\n")
 
+#prints out the match with the youtube_cc_data
         for video_title in youtube_cc_data:
                 for line in youtube_cc_data[video_title]:
                         if search_string in line['text']:
